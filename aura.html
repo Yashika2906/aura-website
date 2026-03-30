@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AURA Premium Skincare</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter;background:#f6f2ec;color:#333}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:white;position:sticky;top:0}
+header img{height:50px}
+nav a{margin:0 15px;text-decoration:none;color:#333;font-weight:500}
+.container{max-width:1100px;margin:auto;padding:20px}
+.hero{text-align:center;padding:60px 20px}
+.hero h1{font-family:'Playfair Display';font-size:36px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:white;padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.05);text-align:center}
+.card a{text-decoration:none;color:#333}
+img{width:100%;border-radius:10px}
+button{background:#c8a97e;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;margin-top:10px}
+.cart{position:fixed;top:20px;right:20px;background:white;padding:15px;border-radius:10px;width:240px}
+</style>
+</head>
+<body>
+
+<header>
+<img src="logo.png">
+<nav>
+<a href="#">Home</a>
+<a href="#products">Products</a>
+<a href="#quiz">Skin Quiz</a>
+</nav>
+</header>
+
+<div class="cart">
+<button onclick="checkout()" style="width:100%;margin-bottom:10px">Proceed to Checkout</button>
+<h4>Cart</h4>
+<div id="cartItems"></div>
+<p><b>Total: ₹<span id="total">0</span></b></p>
+</div>
+
+<div class="hero">
+<h1>Discover Your AURA</h1>
+<button onclick="openQuiz()">Take Skin Quiz</button>
+</div>
+
+<div class="container" id="products">
+<h2>Products</h2>
+<div class="products">
+
+<div class="card">
+<a href="#" onclick="openProduct('Sunscreen',899)">
+<img src="sunscreen.jpeg">
+<h3>Radiance Shield SPF 50</h3>
+</a>
+<p>₹899</p>
+</div>
+
+<div class="card">
+<a href="#" onclick="openProduct('Cleanser',699)">
+<img src="cleanser.jpeg">
+<h3>Gentle Cleanser</h3>
+</a>
+<p>₹699</p>
+</div>
+
+<div class="card">
+<a href="#" onclick="openProduct('Night Cream',1299)">
+<img src="nightcream.jpeg">
+<h3>Night Repair Cream</h3>
+</a>
+<p>₹1299</p>
+</div>
+
+<div class="card">
+<a href="#" onclick="openProduct('Combo',2499)">
+<img src="lipbalm.jpeg">
+<h3>Combo Set (Free Lip Balm)</h3>
+</a>
+<p>₹2499</p>
+</div>
+
+</div>
+</div>
+
+<div class="container" id="quiz" style="display:none">
+<h2>Skin Quiz</h2>
+<div id="quizBox"></div>
+</div>
+
+<div class="container" id="productDetail"></div>
+
+<script>
+let cart=[],total=0,step=0,answers={};
+
+function openQuiz(){
+document.getElementById('quiz').style.display='block';
+document.getElementById('quiz').scrollIntoView({behavior:'smooth'});
+showQ();}
+
+function showQ(){let q=document.getElementById('quizBox');
+
+if(step==0){q.innerHTML=`<h3>Skin Type?</h3>
+<button onclick="next('oily')">Oily</button>
+<button onclick="next('dry')">Dry</button>
+<button onclick="next('combo')">Combination</button>`}
+
+else if(step==1){q.innerHTML=`<h3>How sensitive is your skin?</h3>
+<button onclick="next('high')">Very Sensitive</button>
+<button onclick="next('medium')">Moderate</button>
+<button onclick="next('low')">Not Sensitive</button>`}
+
+else if(step==2){q.innerHTML=`<h3>How much sun exposure do you get?</h3>
+<button onclick="next('high')">High (Outdoors)</button>
+<button onclick="next('medium')">Moderate</button>
+<button onclick="next('low')">Low (Indoors)</button>`}
+
+else if(step==3){q.innerHTML=`<h3>Main Skin Concern?</h3>
+<button onclick="next('acne')">Acne</button>
+<button onclick="next('dull')">Dullness</button>
+<button onclick="next('aging')">Aging</button>`}
+
+else if(step==4){q.innerHTML=`<h3>Preferred Texture?</h3>
+<button onclick="next('light')">Lightweight</button>
+<button onclick="next('rich')">Rich Cream</button>`}
+
+else if(step==5){q.innerHTML=`<h3>Do you wear makeup daily?</h3>
+<button onclick="next('yes')">Yes</button>
+<button onclick="next('no')">No</button>`}
+
+else showResult();}
+
+function next(ans){answers[step]=ans;step++;showQ();}
+
+function showResult(){
+let type = answers[0];
+let variant = type=='oily'?'O1':type=='dry'?'D1':'C1';
+
+// refine logic
+if(type=='oily' && answers[3]=='acne') variant='O1';
+if(type=='dry' && answers[4]=='rich') variant='D1';
+if(type=='combo' && answers[2]=='high') variant='C1';
+
+document.getElementById('quizBox').innerHTML=`
+<h3>Your Personalized Routine: ${variant}</h3>
+<p><b>Sunscreen:</b> Radiance Shield ${variant}</p>
+<p><b>Cleanser:</b> Gentle Cleanser ${variant}</p>
+<p><b>Night Cream:</b> Night Repair ${variant}</p>
+<p style='color:#c8a97e'><b>Recommended for your skin profile</b></p>
+<button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now</button>`;
+}
+
+function openProduct(name,price){
+document.getElementById('productDetail').innerHTML=`
+<div class='card'>
+<h2>${name}</h2>
+<p>Select your variant:</p>
+<button onclick="choose('${name}','O1',${price})">O1 (Oily Skin)</button>
+<button onclick="choose('${name}','D1',${price})">D1 (Dry Skin)</button>
+<button onclick="choose('${name}','C1',${price})">C1 (Combination Skin)</button>
+<div id='selection'></div>
+</div>`;
+document.getElementById('productDetail').scrollIntoView({behavior:'smooth'});
+}
+
+function choose(name,variant,price){
+document.getElementById('selection').innerHTML=`
+<p><b>Selected: ${name} - ${variant}</b></p>
+<button onclick="addToCart('${name} (${variant})',${price})">Add to Cart</button>`;
+}
+
+function addToCart(name,price){cart.push({name,price});total+=price;updateCart();}
+
+function updateCart(){let c=document.getElementById('cartItems');c.innerHTML='';cart.forEach((i,index)=>{c.innerHTML+=`<p>${i.name} - ₹${i.price} <span onclick='removeItem(${index})' style='color:red;cursor:pointer'>x</span></p>`});document.getElementById('total').innerText=total;}
+
+function removeItem(i){total-=cart[i].price;cart.splice(i,1);updateCart();}
+
+function checkout(){
+if(cart.length===0){alert('Your cart is empty');return;}
+alert('Proceeding to checkout...\nTotal Amount: ₹'+total+'\n(Payment UI can be added
+</script>
+
+</body>
+</html>
